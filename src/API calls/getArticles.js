@@ -4,9 +4,9 @@ const getArticles = (article_id) => {
   let baseURL =
     "https://nc-news-backend-project-5kc8.onrender.com/api/articles";
 
-    if(article_id){
-        baseURL += `/${article_id}`
-    }
+  if (article_id) {
+    baseURL += `/${article_id}`;
+  }
 
   return axios
     .get(baseURL)
@@ -18,4 +18,13 @@ const getArticles = (article_id) => {
     });
 };
 
-export {getArticles}
+const patchArticle = (article_id, voteValue) => {
+  const patchBody = { inc_votes: voteValue };
+  const articleUrl = `https://nc-news-backend-project-5kc8.onrender.com/api/articles/${article_id}`;
+
+  return axios.patch(articleUrl, patchBody).then(({ data }) => {
+    return data.article;
+  });
+};
+
+export { getArticles, patchArticle };
