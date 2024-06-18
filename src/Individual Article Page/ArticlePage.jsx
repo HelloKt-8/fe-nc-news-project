@@ -4,13 +4,16 @@ import Header from "../homepage/Header";
 import UsersNav from "../homepage/UsersNav";
 import NavBar from "../homepage/NavBar";
 import SearchBar from "../homepage/SearchBar";
-import { getArticles } from "../API calls/getArticles";
+import { getArticles, patchArticle } from "../API calls/getArticles";
 import { getComments } from "../API calls/getComments";
 
 const ArticlePage = () => {
   const [article, setArticle] = useState([]);
   const [comments, setComments] = useState([]);
+  const [votes, setVotes] = useState([]);
+
   const { article_id } = useParams();
+
   useEffect(() => {
     getArticles(article_id).then((data) => {
       setArticle(data.article);
@@ -19,8 +22,12 @@ const ArticlePage = () => {
       setComments(data.comments);
     });
   }, [article_id]);
-  console.log(article)
-  console.log(comments);
+
+  const upVote = (article_id, voteValue) => {
+    patchArticle(article_id, voteValue).then((data) => {
+      setVotes(data.votes);
+    });
+  };
 
   return (
     <div>
@@ -34,16 +41,25 @@ const ArticlePage = () => {
         <h2>{article.title}</h2>
         <p>Author: {article.author}</p>
         <h3>on: {article.topic}</h3>
+        <button onClick={() => upVote(article.article_id, 1)}>
+          {votes > 0 && votes}
+          <span aria-label="votes for this article"> 👍</span>
+        </button>
+        <button onClick={() => upVote(article.article_id, -1)}>
+        {votes < 0 && votes}
+          <span aria-label="votes for this article">👎</span>
+        </button>
+        <br></br>
         <img src={article.article_img_url} alt={article.topic} />
       </div>
       <div className="comments">
         {comments.map((comment) => {
           return (
-            <>
+            <section key={comment.comment_id}>
               <h4>{comment.author} said: </h4>
               <p>{comment.body}</p>
-              <p>at: {comment.created_at.slice(0,10)}</p>
-            </>
+              <p>at: {comment.created_at.slice(0, 10)}</p>
+            </section>
           );
         })}
       </div>
