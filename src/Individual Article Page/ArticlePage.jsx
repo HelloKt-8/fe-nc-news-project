@@ -8,9 +8,9 @@ import { getArticles, patchArticle } from "../API calls/getArticles";
 import { getComments, postNewComments } from "../API calls/getComments";
 
 const ArticlePage = () => {
-  const [article, setArticle] = useState({});
+  const [article, setArticle] = useState([]);
   const [comments, setComments] = useState([]);
-  const [votes, setVotes] = useState(0);
+  const [votes, setVotes] = useState([]);
   const [newComment, setNewComment] = useState("");
 
   const { article_id } = useParams();
@@ -26,8 +26,10 @@ const ArticlePage = () => {
   }, [article_id]);
 
   const upVote = (article_id, voteValue) => {
-    patchArticle(article_id, voteValue).then((data) => {
-      setVotes(data.article.votes);
+    setVotes((beforeVotes) => beforeVotes + voteValue);
+    patchArticle(article_id, voteValue).catch((err) => {
+      setVotes((beforeVotes) => beforeVotes - voteValue);
+      console.log(err, "error patching like");
     });
   };
 
@@ -58,7 +60,6 @@ const ArticlePage = () => {
       });
   };
 
-  console.log(comments);
 
   return (
     <div>
@@ -84,7 +85,7 @@ const ArticlePage = () => {
         <img src={article.article_img_url} alt={article.topic} />
       </div>
       <div className="comments">
-        <form
+      <form
           className="CommentAdder"
           onSubmit={handleSubmit}
           id="commentAdder"
