@@ -5,12 +5,13 @@ import UsersNav from "../homepage/UsersNav";
 import NavBar from "../homepage/NavBar";
 import SearchBar from "../homepage/SearchBar";
 import { getArticles, patchArticle } from "../API calls/getArticles";
-import { getComments } from "../API calls/getComments";
+import { getComments, postNewComments } from "../API calls/getComments";
 
 const ArticlePage = () => {
-  const [article, setArticle] = useState([]);
+  const [article, setArticle] = useState({});
   const [comments, setComments] = useState([]);
-  const [votes, setVotes] = useState([]);
+  const [votes, setVotes] = useState(0);
+  const [newComment, setNewComment] = useState("");
 
   const { article_id } = useParams();
 
@@ -25,12 +26,38 @@ const ArticlePage = () => {
   }, [article_id]);
 
   const upVote = (article_id, voteValue) => {
-    setVotes((beforeVotes) => beforeVotes + voteValue);
-    patchArticle(article_id, voteValue).catch((err) => {
-      setVotes((beforeVotes) => beforeVotes - voteValue);
-      console.log(err, "error patching like");
+
     });
   };
+
+  const handleChange = (event) => {
+    setNewComment(event.target.value);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const username = "username_placement";
+
+    const comment = {
+      username: username,
+      body: newComment,
+    };
+
+    console.log("COMMENT TO ADD >>>", comment);
+
+    postNewComments(comment, article_id)
+      .then((newCommentFromApi) => {
+        setNewComment("");
+        setComments((currentComments) => {
+          return [newCommentFromApi, ...currentComments];
+        });
+      })
+      .catch((err) => {
+        console.log(err, "error posting comment");
+      });
+  };
+
+  console.log(comments);
 
   return (
     <div>
@@ -56,6 +83,20 @@ const ArticlePage = () => {
         <img src={article.article_img_url} alt={article.topic} />
       </div>
       <div className="comments">
+        <form
+          className="CommentAdder"
+          onSubmit={handleSubmit}
+          id="commentAdder"
+        >
+          <label htmlFor="newComment">Add a comment:</label>
+          <textarea
+            id="newComment"
+            aria-multiline="true"
+            onChange={handleChange}
+            value={newComment}
+          ></textarea>
+          <button>Add Comment</button>
+        </form>
         {comments.map((comment) => {
           return (
             <section key={comment.comment_id}>
