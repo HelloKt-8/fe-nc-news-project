@@ -17,6 +17,7 @@ const ArticlePage = () => {
   useEffect(() => {
     getArticles(article_id).then((data) => {
       setArticle(data.article);
+      setVotes(data.article.votes);
     });
     getComments(article_id).then((data) => {
       setComments(data.comments);
@@ -24,8 +25,10 @@ const ArticlePage = () => {
   }, [article_id]);
 
   const upVote = (article_id, voteValue) => {
-    patchArticle(article_id, voteValue).then((data) => {
-      setVotes(data.votes);
+    setVotes((beforeVotes) => beforeVotes + voteValue);
+    patchArticle(article_id, voteValue).catch((err) => {
+      setVotes((beforeVotes) => beforeVotes - voteValue);
+      console.log(err, "error patching like");
     });
   };
 
@@ -46,7 +49,7 @@ const ArticlePage = () => {
           <span aria-label="votes for this article"> 👍</span>
         </button>
         <button onClick={() => upVote(article.article_id, -1)}>
-        {votes < 0 && votes}
+          {votes < 0 && votes}
           <span aria-label="votes for this article">👎</span>
         </button>
         <br></br>
