@@ -18,6 +18,7 @@ const ArticlePage = () => {
   useEffect(() => {
     getArticles(article_id).then((data) => {
       setArticle(data.article);
+      setVotes(data.article.votes);
     });
     getComments(article_id).then((data) => {
       setComments(data.comments);
@@ -25,8 +26,7 @@ const ArticlePage = () => {
   }, [article_id]);
 
   const upVote = (article_id, voteValue) => {
-    patchArticle(article_id, voteValue).then((data) => {
-      setVotes(data.article.votes);
+
     });
   };
 
