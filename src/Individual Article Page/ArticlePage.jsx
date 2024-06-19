@@ -26,7 +26,8 @@ const ArticlePage = () => {
   }, [article_id]);
 
   const upVote = (article_id, voteValue) => {
-
+    patchArticle(article_id, voteValue).then((data) => {
+      setVotes(data.article.votes);
     });
   };
 
