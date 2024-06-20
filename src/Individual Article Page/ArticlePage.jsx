@@ -27,7 +27,13 @@ const ArticlePage = () => {
   }, [article_id]);
 
   const upVote = (article_id, voteValue) => {
-
+    patchArticle(article_id, voteValue).then((data) => {
+      setVotes(data.votes);
+      setVotes((beforeVotes) => beforeVotes + voteValue);
+      patchArticle(article_id, voteValue).catch((err) => {
+        setVotes((beforeVotes) => beforeVotes - voteValue);
+        console.log(err, "error patching like");
+      });
     });
   };
 
@@ -38,7 +44,7 @@ const ArticlePage = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     event.currentTarget.disabled = true;
-    setCommentStatus(false)
+    setCommentStatus(false);
     const username = "happyamy2016";
 
     const comment = {
@@ -58,12 +64,11 @@ const ArticlePage = () => {
         setCommentStatus(false);
         console.log(err, "error posting comment");
       });
-
   };
 
   const handleClick = () => {
-    setCommentStatus(false)
-  }
+    setCommentStatus(false);
+  };
 
   return (
     <div>
