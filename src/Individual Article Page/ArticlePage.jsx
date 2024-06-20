@@ -13,6 +13,7 @@ const ArticlePage = () => {
   const [votes, setVotes] = useState(0);
   const [newComment, setNewComment] = useState("");
   const [commentStatus, setCommentStatus] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { article_id } = useParams();
 
@@ -43,8 +44,8 @@ const ArticlePage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    event.currentTarget.disabled = true;
     setCommentStatus(false);
+    setIsSubmitting(true);
     const username = "happyamy2016";
 
     const comment = {
@@ -59,9 +60,11 @@ const ArticlePage = () => {
           setCommentStatus(true);
           return [newCommentFromApi, ...currentComments];
         });
+        setIsSubmitting(false);
       })
       .catch((err) => {
         setCommentStatus(false);
+        setIsSubmitting(false);
         console.log(err, "error posting comment");
       });
   };
@@ -108,7 +111,7 @@ const ArticlePage = () => {
             onClick={handleClick}
             required
           ></textarea>
-          <button>
+          <button disabled={isSubmitting}>
             {commentStatus === false ? (
               <p> Add Comment</p>
             ) : (
