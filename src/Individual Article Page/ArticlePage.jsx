@@ -8,11 +8,12 @@ import { getArticles, patchArticle } from "../API calls/getArticles";
 import { getComments, postNewComments } from "../API calls/getComments";
 
 const ArticlePage = () => {
-  const [article, setArticle] = useState([]);
+  const [article, setArticle] = useState({});
   const [comments, setComments] = useState([]);
-  const [votes, setVotes] = useState([]);
+  const [votes, setVotes] = useState(0);
   const [newComment, setNewComment] = useState("");
   const [commentStatus, setCommentStatus] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { article_id } = useParams();
 
@@ -27,7 +28,6 @@ const ArticlePage = () => {
   }, [article_id]);
 
   const upVote = (article_id, voteValue) => {
-
     patchArticle(article_id, voteValue).then((data) => {
       setVotes(data.votes);
       setVotes((beforeVotes) => beforeVotes + voteValue);
@@ -35,11 +35,6 @@ const ArticlePage = () => {
         setVotes((beforeVotes) => beforeVotes - voteValue);
         console.log(err, "error patching like");
       });
-
-    setVotes((beforeVotes) => beforeVotes + voteValue);
-    patchArticle(article_id, voteValue).catch((err) => {
-      setVotes((beforeVotes) => beforeVotes - voteValue);
-      console.log(err, "error patching like");
     });
   };
 
@@ -49,8 +44,8 @@ const ArticlePage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    event.currentTarget.disabled = true;
     setCommentStatus(false);
+    setIsSubmitting(true);
     const username = "happyamy2016";
 
     const comment = {
@@ -65,9 +60,11 @@ const ArticlePage = () => {
           setCommentStatus(true);
           return [newCommentFromApi, ...currentComments];
         });
+        setIsSubmitting(false);
       })
       .catch((err) => {
         setCommentStatus(false);
+        setIsSubmitting(false);
         console.log(err, "error posting comment");
       });
   };
@@ -75,7 +72,7 @@ const ArticlePage = () => {
   const handleClick = () => {
     setCommentStatus(false);
   };
-    
+
   return (
     <div>
       <div className="header-components">
@@ -100,7 +97,7 @@ const ArticlePage = () => {
         <img src={article.article_img_url} alt={article.topic} />
       </div>
       <div className="comments">
-      <form
+        <form
           className="CommentAdder"
           onSubmit={handleSubmit}
           id="commentAdder"
@@ -114,7 +111,7 @@ const ArticlePage = () => {
             onClick={handleClick}
             required
           ></textarea>
-          <button>
+          <button disabled={isSubmitting}>
             {commentStatus === false ? (
               <p> Add Comment</p>
             ) : (
