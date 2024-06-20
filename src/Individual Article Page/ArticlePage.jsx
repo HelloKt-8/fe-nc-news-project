@@ -60,7 +60,6 @@ const ArticlePage = () => {
       });
   };
 
-
   return (
     <div>
       <div className="header-components">
@@ -85,7 +84,7 @@ const ArticlePage = () => {
         <img src={article.article_img_url} alt={article.topic} />
       </div>
       <div className="comments">
-      <form
+        <form
           className="CommentAdder"
           onSubmit={handleSubmit}
           id="commentAdder"
