@@ -13,7 +13,7 @@ const ArticlePage = () => {
   const [votes, setVotes] = useState(0);
   const [newComment, setNewComment] = useState("");
   const [commentStatus, setCommentStatus] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { article_id } = useParams();
 
@@ -28,16 +28,12 @@ const ArticlePage = () => {
   }, [article_id]);
 
   const upVote = (article_id, voteValue) => {
-    patchArticle(article_id, voteValue).then((data) => {
-      setVotes(data.votes);
-      setVotes((beforeVotes) => beforeVotes + voteValue);
-      patchArticle(article_id, voteValue).catch((err) => {
-        setVotes((beforeVotes) => beforeVotes - voteValue);
-        console.log(err, "error patching like");
-      });
+    setVotes((beforeVotes) => beforeVotes + voteValue);
+    patchArticle(article_id, voteValue).catch((err) => {
+      setVotes((beforeVotes) => beforeVotes - voteValue);
+      console.log(err, "error patching like");
     });
   };
-
   const handleChange = (event) => {
     setNewComment(event.target.value);
   };
