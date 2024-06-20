@@ -12,6 +12,7 @@ const ArticlePage = () => {
   const [comments, setComments] = useState([]);
   const [votes, setVotes] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [commentStatus, setCommentStatus] = useState(false);
 
   const { article_id } = useParams();
 
@@ -26,6 +27,15 @@ const ArticlePage = () => {
   }, [article_id]);
 
   const upVote = (article_id, voteValue) => {
+
+    patchArticle(article_id, voteValue).then((data) => {
+      setVotes(data.votes);
+      setVotes((beforeVotes) => beforeVotes + voteValue);
+      patchArticle(article_id, voteValue).catch((err) => {
+        setVotes((beforeVotes) => beforeVotes - voteValue);
+        console.log(err, "error patching like");
+      });
+
     setVotes((beforeVotes) => beforeVotes + voteValue);
     patchArticle(article_id, voteValue).catch((err) => {
       setVotes((beforeVotes) => beforeVotes - voteValue);
@@ -39,28 +49,33 @@ const ArticlePage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const username = "username_placement";
+    event.currentTarget.disabled = true;
+    setCommentStatus(false);
+    const username = "happyamy2016";
 
     const comment = {
       username: username,
       body: newComment,
     };
 
-    console.log("COMMENT TO ADD >>>", comment);
-
     postNewComments(comment, article_id)
       .then((newCommentFromApi) => {
         setNewComment("");
         setComments((currentComments) => {
+          setCommentStatus(true);
           return [newCommentFromApi, ...currentComments];
         });
       })
       .catch((err) => {
+        setCommentStatus(false);
         console.log(err, "error posting comment");
       });
   };
 
-
+  const handleClick = () => {
+    setCommentStatus(false);
+  };
+    
   return (
     <div>
       <div className="header-components">
@@ -96,8 +111,16 @@ const ArticlePage = () => {
             aria-multiline="true"
             onChange={handleChange}
             value={newComment}
+            onClick={handleClick}
+            required
           ></textarea>
-          <button>Add Comment</button>
+          <button>
+            {commentStatus === false ? (
+              <p> Add Comment</p>
+            ) : (
+              <p>Comment Added!</p>
+            )}
+          </button>
         </form>
         {comments.map((comment) => {
           return (
