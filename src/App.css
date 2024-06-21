@@ -59,3 +59,8 @@ article-imgs {
   border-radius: 15%;
 }
 
+.NavBar{
+  display: flex;
+  justify-content: space-around;
+  
+}

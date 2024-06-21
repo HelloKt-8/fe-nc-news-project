@@ -20,7 +20,6 @@ const ArticlePage = ({ changeUser }) => {
 
   const { article_id } = useParams();
 
-  console.log(changeUser);
   useEffect(() => {
     getArticles(article_id).then((data) => {
       setArticle(data.article);

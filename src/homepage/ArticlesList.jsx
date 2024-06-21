@@ -2,8 +2,7 @@ import { React, useEffect, useState } from "react";
 import { getArticles } from "../API calls/getArticles";
 import { Link } from "react-router-dom";
 
-const ArticlesList = () => {
-  const [articles, setArticles] = useState([]);
+const ArticlesList = ({articles, setArticles}) => {
   useEffect(() => {
     getArticles().then((data) => {
       setArticles(data.articles);
