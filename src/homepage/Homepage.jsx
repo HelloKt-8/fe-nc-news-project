@@ -1,23 +1,18 @@
-import React from 'react'
-import Header from './Header'
-import SearchBar from './SearchBar'
-import ArticlesList from './ArticlesList'
-import NavBar from './NavBar'
-import UsersNav from './UsersNav'
+import React from 'react';
+import Header from './Header';
+import SearchBar from './SearchBar';
+import NavBar from './NavBar';
+import UsersNav from './UsersNav';
 
-
-
-function Homepage() {
-
+function Homepage({ changeUser }) {
   return (
     <>
-     <UsersNav />
-    <Header />
-    <NavBar />
-    <SearchBar />
-    <ArticlesList />
+      <UsersNav changeUser={changeUser} />
+      <Header />
+      <NavBar />
+      <SearchBar />
     </>
-  )
+  );
 }
 
-export default Homepage
+export default Homepage;

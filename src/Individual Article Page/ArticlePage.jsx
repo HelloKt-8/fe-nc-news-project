@@ -1,22 +1,26 @@
 import { React, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Header from "../homepage/Header";
-import UsersNav from "../homepage/UsersNav";
-import NavBar from "../homepage/NavBar";
-import SearchBar from "../homepage/SearchBar";
 import { getArticles, patchArticle } from "../API calls/getArticles";
-import { getComments, postNewComments } from "../API calls/getComments";
+import {
+  getComments,
+  postNewComments,
+  deleteComments,
+} from "../API calls/getComments";
 
-const ArticlePage = () => {
+const ArticlePage = ({ changeUser }) => {
   const [article, setArticle] = useState({});
   const [comments, setComments] = useState([]);
   const [votes, setVotes] = useState(0);
   const [newComment, setNewComment] = useState("");
   const [commentStatus, setCommentStatus] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deleteCommentId, setDeleteCommentId] = useState(null);
+  const [deleted, setDeleted] = useState(false)
+
 
   const { article_id } = useParams();
 
+  console.log(changeUser);
   useEffect(() => {
     getArticles(article_id).then((data) => {
       setArticle(data.article);
@@ -42,7 +46,7 @@ const ArticlePage = () => {
     event.preventDefault();
     setCommentStatus(false);
     setIsSubmitting(true);
-    const username = "happyamy2016";
+    const username = changeUser;
 
     const comment = {
       username: username,
@@ -69,14 +73,27 @@ const ArticlePage = () => {
     setCommentStatus(false);
   };
 
+  const handleDeleteClick = (comment_id) => {
+    setDeleteCommentId(comment_id)
+    setDeleted(true)
+    setTimeout(() => setDeleted(false), 3000);
+    setComments((currentComments) => {
+      return currentComments.filter(
+        (comment) => comment.comment_id !== comment_id
+      );
+    });
+    deleteComments(comment_id)
+      .then(() => {})
+      .catch((err) => {
+        setComments((currentComments) => {
+          currentComments;
+          console.log(err, "error deleting comments");
+        });
+      });
+  };
+
   return (
     <div>
-      <div className="header-components">
-        <UsersNav />
-        <Header />
-        <NavBar />
-        <SearchBar />
-      </div>
       <div className="item-details">
         <h2>{article.title}</h2>
         <p>Author: {article.author}</p>
@@ -121,9 +138,16 @@ const ArticlePage = () => {
               <h4>{comment.author} said: </h4>
               <p>{comment.body}</p>
               <p>at: {comment.created_at.slice(0, 10)}</p>
+              {changeUser === comment.author && (
+                <button onClick={() => handleDeleteClick(comment.comment_id)}>
+                  Delete Comment
+                </button>
+              )}
+              {comment.comment_id === deleteCommentId && deleted === true ? (<p>Commet deleted Successfully!</p>) : (null)}
             </section>
           );
         })}
+        ;
       </div>
     </div>
   );
