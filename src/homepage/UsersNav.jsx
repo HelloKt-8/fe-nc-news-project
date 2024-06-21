@@ -1,7 +1,13 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-const UsersNav = () => {
-  return <p className="users">Hello Users</p>;
+const UsersNav = ({ changeUser }) => {
+  console.log(changeUser)
+  return (
+    <Link to={"/users"}>
+      <p className="users">Hello {changeUser}</p>
+    </Link>
+  );
 };
 
-export default UsersNav
+export default UsersNav;

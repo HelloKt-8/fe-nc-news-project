@@ -15,7 +15,7 @@ const ArticlesList = () => {
       {articles.map((article) => {
         return (
           <Link to={`/articles/${article.article_id}`} key={article.article_id}>
-            <figure key={article.article_id}>
+            <figure key={article.article_id} >
               <img src={article.article_img_url} alt={article.title} />
               <figcaption key={article.article_id}>{article.title}</figcaption>
             </figure>
